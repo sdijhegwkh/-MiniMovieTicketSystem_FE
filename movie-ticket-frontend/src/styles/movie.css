@@ -1,0 +1,391 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&display=swap');
+
+
+html, body {
+  background: #0a0a0f;
+}
+/* ─── Movies Page ─────────────────────────────────────────── */
+.movies-wrapper {
+  background: #0a0a0f;
+  padding: 48px 24px;
+}
+
+/* ─── Page Header ─────────────────────────────────────────── */
+.movies-header {
+  text-align: center;
+  margin-bottom: 44px;
+  animation: fade-in-up 0.6s 0.1s both;
+}
+
+.movies-eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.35em;
+  color: var(--gold);
+  text-transform: uppercase;
+  opacity: 0.7;
+  margin-bottom: 8px;
+}
+
+.movies-title {
+  font-family: 'Bebas Neue', sans-serif;
+  line-height: 1.2;
+  font-size: 46px;
+  letter-spacing: 0.15em;
+  background: linear-gradient(
+    90deg,
+    var(--gold-light),
+    var(--text-main),
+    var(--gold-light),
+    var(--text-main)
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s 1s linear infinite;
+}
+
+.movies-line {
+  width: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 10px auto 0;
+  animation: line-expand 0.8s 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ─── Grid ────────────────────────────────────────────────── */
+.movies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 22px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ─── Movie Card ──────────────────────────────────────────── */
+.movie-card {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(24px) saturate(1.4);
+  overflow: hidden;
+  clip-path: polygon(
+    0 0,
+    calc(100% - 18px) 0,
+    100% 18px,
+    100% 100%,
+    18px 100%,
+    0 calc(100% - 18px)
+  );
+  transition: border-color 0.3s, transform 0.2s;
+  animation: card-enter 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.movie-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(201, 168, 76, 0.04) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.movie-card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-3px);
+}
+
+.movie-card:nth-child(1) { animation-delay: 0.10s; }
+.movie-card:nth-child(2) { animation-delay: 0.20s; }
+.movie-card:nth-child(3) { animation-delay: 0.30s; }
+.movie-card:nth-child(4) { animation-delay: 0.40s; }
+.movie-card:nth-child(5) { animation-delay: 0.50s; }
+.movie-card:nth-child(6) { animation-delay: 0.60s; }
+
+/* ─── Corner Accents ──────────────────────────────────────── */
+.corner {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: var(--gold);
+  border-style: solid;
+  opacity: 0.45;
+  z-index: 3;
+}
+.corner-tl { top: 7px;    left: 7px;   border-width: 1px 0 0 1px; }
+.corner-br { bottom: 7px; right: 7px;  border-width: 0 1px 1px 0; }
+
+/* ─── Ticket Strip ────────────────────────────────────────── */
+.ticket-strip {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--gold) 0px, var(--gold) 6px,
+    transparent 6px, transparent 12px
+  );
+  opacity: 0.25;
+  z-index: 3;
+}
+
+/* ─── Poster Area ─────────────────────────────────────────── */
+.poster-wrap {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background: #0c0c14;
+}
+
+.poster-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  filter: brightness(0.88) saturate(1.1);
+}
+
+.movie-card:hover .poster-img {
+  transform: scale(1.05);
+}
+
+.poster-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 35%,
+    rgba(7, 7, 9, 0.95) 100%
+  );
+}
+
+/* ─── Placeholder khi không có image ─────────────────────── */
+.poster-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: repeating-linear-gradient(
+    135deg,
+    #0c0c14 0px, #0c0c14 20px,
+    #0e0e18 20px, #0e0e18 40px
+  );
+}
+
+.placeholder-icon {
+  width: 40px;
+  height: 52px;
+  border: 1.5px solid rgba(201, 168, 76, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.5;
+}
+
+.placeholder-text {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  opacity: 0.5;
+}
+
+/* ─── Badge trên poster ───────────────────────────────────── */
+.badge-on-poster {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+}
+
+.badge-on-poster.now-showing {
+  background: rgba(201, 168, 76, 0.18);
+  border: 1px solid rgba(201, 168, 76, 0.4);
+  color: var(--gold);
+}
+
+.badge-on-poster.coming-soon {
+  background: rgba(120, 100, 200, 0.18);
+  border: 1px solid rgba(120, 100, 200, 0.4);
+  color: #b0a0f0;
+}
+
+.badge-on-poster.ended {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-muted);
+}
+
+.badge-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: blink 1.4s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+/* ─── Card Body ───────────────────────────────────────────── */
+.card-body {
+  padding: 18px 20px 14px;
+  position: relative;
+  z-index: 2;
+}
+
+.movie-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 0.08em;
+  color: var(--text-main);
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+
+.movie-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.meta-tag {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.meta-sep {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--border-hover);
+  flex-shrink: 0;
+}
+
+.movie-desc {
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 12px;
+  border-left: 2px solid var(--gold-dim);
+  padding-left: 10px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.movie-cast {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+
+.cast-label {
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(201, 168, 76, 0.65);
+  font-weight: 500;
+  display: block;
+  margin-bottom: 2px;
+}
+
+/* ─── Card Footer ─────────────────────────────────────────── */
+.movie-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+
+.movie-duration {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+/* ─── Book Button ─────────────────────────────────────────── */
+.book-btn {
+  background: linear-gradient(
+    135deg,
+    #b8963a 0%, #c9a84c 40%, #d4b05a 60%, #b8963a 100%
+  );
+  background-size: 200% auto;
+  color: #0a0608;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  padding: 9px 18px;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  clip-path: polygon(
+    0 0, calc(100% - 7px) 0,
+    100% 7px, 100% 100%,
+    7px 100%, 0 calc(100% - 7px)
+  );
+  transition: background-position 0.4s, transform 0.15s;
+}
+
+.book-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.45s;
+}
+
+.book-btn:not(:disabled):hover {
+  background-position: right center;
+  transform: translateY(-1px);
+}
+
+.book-btn:not(:disabled):hover::after {
+  transform: translateX(100%);
+}
+
+.book-btn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+/* ─── Empty State ─────────────────────────────────────────── */
+.movies-empty {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+  padding: 60px 20px;
+  letter-spacing: 0.08em;
+}
+
+/* ─── Responsive ──────────────────────────────────────────── */
+@media (max-width: 500px) {
+  .movies-title { font-size: 36px; }
+  .movies-grid  { grid-template-columns: 1fr; }
+  .poster-wrap  { height: 180px; }
+}
