@@ -1,0 +1,245 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&display=swap');
+
+/* ─── Keyframes ───────────────────────────────────────────── */
+@keyframes navbar-enter {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes link-underline {
+  from { width: 0; }
+  to   { width: 100%; }
+}
+
+@keyframes topline-shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+
+/* ─── Navbar shell ────────────────────────────────────────── */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  height: 64px;
+  background: rgba(7, 7, 9, 0.88);
+  backdrop-filter: blur(20px) saturate(1.5);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+  animation: navbar-enter 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ─── Shimmer top line ────────────────────────────────────── */
+.navbar-topline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent       0%,
+    rgba(201,168,76,0.15) 20%,
+    rgba(201,168,76,0.7)  50%,
+    rgba(201,168,76,0.15) 80%,
+    transparent       100%
+  );
+  background-size: 400px 100%;
+  animation: topline-shimmer 4s linear infinite;
+}
+
+/* ─── Logo ────────────────────────────────────────────────── */
+.navbar-logo {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+  text-decoration: none;
+  gap: 1px;
+}
+
+.navbar-logo-eye {
+  font-family: 'Outfit', sans-serif;
+  font-size: 8px;
+  font-weight: 400;
+  letter-spacing: 0.35em;
+  color: rgba(201, 168, 76, 0.65);
+  text-transform: uppercase;
+}
+
+.navbar-logo-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 26px;
+  letter-spacing: 0.12em;
+  background: linear-gradient(
+    90deg,
+    #e8c97a,
+    #f0ece0,
+    #c9a84c
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Nav links group ─────────────────────────────────────── */
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ─── Regular nav link ────────────────────────────────────── */
+.navbar-link {
+  position: relative;
+  text-decoration: none;
+  padding: 6px 14px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  color: rgba(240, 236, 224, 0.55);
+  text-transform: uppercase;
+  transition: color 0.25s;
+}
+
+.navbar-link-inner {
+  position: relative;
+}
+
+/* Underline bar */
+.navbar-link-inner::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  height: 1px;
+  width: 0;
+  background: linear-gradient(90deg, transparent, #c9a84c, transparent);
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.navbar-link:hover {
+  color: rgba(240, 236, 224, 0.9);
+}
+
+.navbar-link:hover .navbar-link-inner::after {
+  width: 100%;
+}
+
+/* Active state */
+.navbar-link.active {
+  color: #c9a84c;
+}
+
+.navbar-link.active .navbar-link-inner::after {
+  width: 100%;
+  background: #c9a84c;
+}
+
+/* ─── CTA button (Đăng ký) ────────────────────────────────── */
+.navbar-cta {
+  margin-left: 8px;
+  padding: 8px 20px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.18em;
+  color: #0a0608;
+  text-decoration: none;
+  background: linear-gradient(135deg, #b8963a 0%, #c9a84c 50%, #d4b05a 100%);
+  background-size: 200% auto;
+  transition: background-position 0.4s, box-shadow 0.3s, transform 0.15s;
+  clip-path: polygon(
+    0 0,
+    calc(100% - 7px) 0,
+    100% 7px,
+    100% 100%,
+    7px 100%,
+    0 calc(100% - 7px)
+  );
+  box-shadow: 0 2px 16px rgba(201, 168, 76, 0.2);
+}
+
+.navbar-cta:hover {
+  background-position: right center;
+  box-shadow: 0 4px 24px rgba(201, 168, 76, 0.4);
+  transform: translateY(-1px);
+}
+
+.navbar-cta:active {
+  transform: translateY(0);
+}
+
+/* ─── User badge (when logged in) ────────────────────────── */
+.navbar-user {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  color: rgba(201, 168, 76, 0.75);
+  padding: 0 10px;
+  border-left: 1px solid rgba(201, 168, 76, 0.15);
+  border-right: 1px solid rgba(201, 168, 76, 0.15);
+  margin: 0 6px;
+  height: 32px;
+}
+
+/* ─── Logout button ───────────────────────────────────────── */
+.navbar-logout {
+  padding: 6px 16px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  color: rgba(240, 236, 224, 0.45);
+  background: transparent;
+  border: 1px solid rgba(201, 168, 76, 0.2);
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: color 0.25s, border-color 0.25s, background 0.25s;
+  clip-path: polygon(
+    0 0,
+    calc(100% - 5px) 0,
+    100% 5px,
+    100% 100%,
+    5px 100%,
+    0 calc(100% - 5px)
+  );
+}
+
+.navbar-logout:hover {
+  color: #e07060;
+  border-color: rgba(192, 57, 43, 0.45);
+  background: rgba(192, 57, 43, 0.06);
+}
+
+/* ─── Responsive ──────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .navbar {
+    padding: 0 20px;
+  }
+
+  .navbar-logo-title {
+    font-size: 22px;
+  }
+
+  .navbar-link {
+    padding: 6px 8px;
+    font-size: 10px;
+  }
+
+  .navbar-cta {
+    padding: 7px 14px;
+    font-size: 12px;
+    margin-left: 4px;
+  }
+
+  .navbar-user {
+    display: none; /* ẩn username trên mobile nhỏ */
+  }
+}

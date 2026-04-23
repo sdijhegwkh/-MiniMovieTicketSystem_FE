@@ -473,3 +473,25 @@ body::before {
   .login-card  { padding: 36px 28px 32px; }
   .logo-title  { font-size: 42px; }
 }
+
+/* ─── Success Message (thêm vào login.css sau .error-msg) ── */
+.success-msg {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(39, 174, 96, 0.1);
+  border: 1px solid rgba(39, 174, 96, 0.3);
+  color: #5dbe7e;
+  font-size: 12px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  animation: fade-in-up 0.3s both;
+  clip-path: polygon(
+    0 0,
+    calc(100% - 6px) 0,
+    100% 6px,
+    100% 100%,
+    6px 100%,
+    0 calc(100% - 6px)
+  );
+}

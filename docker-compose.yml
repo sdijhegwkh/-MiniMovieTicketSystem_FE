@@ -1,0 +1,137 @@
+version: "3.9"
+
+services:
+  # ── RabbitMQ ─────────────────────────────────────────────
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    ports:
+      - "5672:5672" # AMQP
+      - "15672:15672" # Management UI: http://localhost:15672 (guest/guest)
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - cinema-net
+
+  # ── MongoDB ───────────────────────────────────────────────
+  mongodb:
+    image: mongo:7-jammy
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - cinema-net
+
+  # ── User Service (port 8081) ──────────────────────────────
+  user-service-1:
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    container_name: user-service-1
+    ports:
+      - "8081:8081"
+    environment:
+      PORT: 8081
+      MONGO_URI: mongodb+srv://legiakhanhtrongsang_db_user:RMb5H7IY3ZS70NVg@cluster0.v8fa6ha.mongodb.net/vipp?appName=Cluster0
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      mongodb:
+        condition: service_started
+    networks:
+      - cinema-net
+    restart: unless-stopped
+
+  # ── Movie Service (port 8082) ─────────────────────────────
+  movie-service:
+    build:
+      context: ./LeGiaKhanh_22691311_MovieTicketSystem
+      dockerfile: Dockerfile
+    container_name: movie-service
+    ports:
+      - "8082:8082"
+    environment:
+      PORT: 8082
+      MONGO_URI: mongodb+srv://legiakhanhtrongsang_db_user:RMb5H7IY3ZS70NVg@cluster0.v8fa6ha.mongodb.net/vipp?appName=Cluster0
+    depends_on:
+      - mongodb
+    networks:
+      - cinema-net
+    restart: unless-stopped
+
+  # ── Booking Service (port 8083) ───────────────────────────
+  booking-service:
+    build:
+      context: ./Booking_Service
+      dockerfile: Dockerfile
+    container_name: booking-service
+    ports:
+      - "8083:8083"
+    environment:
+      PORT: 8083
+      MONGO_URI: mongodb+srv://legiakhanhtrongsang_db_user:RMb5H7IY3ZS70NVg@cluster0.v8fa6ha.mongodb.net/vipp?appName=Cluster0
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      mongodb:
+        condition: service_started
+    networks:
+      - cinema-net
+    restart: unless-stopped
+
+  # ── Payment + Notification Service (port 8084) ────────────
+  payment-service:
+    build:
+      context: ./movie-ticket-system-payment-notification
+      dockerfile: Dockerfile
+    container_name: payment-service
+    ports:
+      - "8085:8085"
+    environment:
+      PORT: 8085
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+      ORDER_API: http://booking-service:8083
+      SUCCESS_RATE: "0.8"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      booking-service:
+        condition: service_started
+    networks:
+      - cinema-net
+    restart: unless-stopped
+
+  # ── Frontend (port 80) ────────────────────────────────────
+  frontend:
+    build:
+      context: ./movie-ticket-frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - user-service-1
+      - movie-service
+      - booking-service
+      - payment-service
+    networks:
+      - cinema-net
+    restart: unless-stopped
+
+# ── Volumes & Networks ────────────────────────────────────────
+volumes:
+  mongo-data:
+
+networks:
+  cinema-net:
+    driver: bridge

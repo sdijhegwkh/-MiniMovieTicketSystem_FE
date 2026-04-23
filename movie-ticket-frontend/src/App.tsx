@@ -4,6 +4,7 @@ import Register from "./pages/Register";
 import Movies from "./pages/Movie";
 import Booking from "./pages/Booking";
 import Navbar from "../src/components/Navbar";
+import MyTickets from "./pages/MyTickets";
 
 const App: React.FC = () => {
   return (
@@ -13,10 +14,11 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/" element={<Navigate to="/login" />} />
 
-  <Route path="/login" element={<Login />} />
-  <Route path="/register" element={<Register />} />
-  <Route path="/movies" element={<Movies />} />
-  <Route path="/booking/:movieId" element={<Booking />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/movies" element={<Movies />} />
+        <Route path="/booking/:movieId" element={<Booking />} />
+        <Route path="/my-tickets" element={<MyTickets />} />
       </Routes>
     </BrowserRouter>
   );

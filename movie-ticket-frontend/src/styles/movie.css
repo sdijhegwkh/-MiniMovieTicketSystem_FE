@@ -389,3 +389,64 @@ html, body {
   .movies-grid  { grid-template-columns: 1fr; }
   .poster-wrap  { height: 180px; }
 }
+
+/* ─── Paste thêm vào cuối file movie.css ─────────────────── */
+
+/* Error banner */
+.movies-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(192, 57, 43, 0.1);
+  border: 1px solid rgba(192, 57, 43, 0.3);
+  color: #e07060;
+  font-size: 13px;
+  padding: 12px 18px;
+  margin: 0 auto 32px;
+  max-width: 480px;
+  clip-path: polygon(
+    0 0, calc(100% - 6px) 0, 100% 6px,
+    100% 100%, 6px 100%, 0 calc(100% - 6px)
+  );
+}
+
+/* Skeleton shimmer */
+@keyframes skeleton-shine {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+
+.skeleton-card {
+  pointer-events: none;
+}
+
+.skeleton-poster {
+  height: 280px;
+  background: linear-gradient(
+    90deg,
+    rgba(201,168,76,0.04) 25%,
+    rgba(201,168,76,0.10) 50%,
+    rgba(201,168,76,0.04) 75%
+  );
+  background-size: 800px 100%;
+  animation: skeleton-shine 1.6s infinite linear;
+}
+
+.skeleton-line {
+  height: 12px;
+  margin-bottom: 12px;
+  border-radius: 2px;
+  background: linear-gradient(
+    90deg,
+    rgba(201,168,76,0.04) 25%,
+    rgba(201,168,76,0.10) 50%,
+    rgba(201,168,76,0.04) 75%
+  );
+  background-size: 800px 100%;
+  animation: skeleton-shine 1.6s infinite linear;
+}
+
+.skeleton-line.w90 { width: 90%; }
+.skeleton-line.w70 { width: 70%; }
+.skeleton-line.w60 { width: 60%; }
+.skeleton-line.w50 { width: 50%; }

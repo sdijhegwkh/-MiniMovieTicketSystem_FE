@@ -1,40 +1,230 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "../styles/login.css"; // dùng chung CSS
+
+const API_BASE = "http://192.168.1.6:8081";
+
+/* ─── FilmStrip sub-component ────────────────────────────── */
+interface FilmStripProps {
+  left: string;
+  dur: number;
+  delay: number;
+  r: number;
+  h: number;
+}
+
+const FilmStrip: React.FC<FilmStripProps> = ({ left, dur, delay, r, h }) => (
+  <div
+    className="film-strip"
+    style={
+      {
+        left,
+        height: `${h}px`,
+        "--dur": `${dur}s`,
+        "--delay": `${delay}s`,
+        "--r": `${r}deg`,
+      } as React.CSSProperties
+    }
+  />
+);
+
+/* ─── Register page ───────────────────────────────────────── */
 const Register: React.FC = () => {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
-  const handleRegister = () => {
-  console.log("EVENT: USER_REGISTERED");
 
-  alert("Đăng ký thành công");
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [confirm, setConfirm] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+  const [success, setSuccess] = useState<string>("");
 
-  // 👉 CHUYỂN LUỒNG
-  navigate("/login");
-};
+  const handleRegister = async () => {
+    if (!username || !password || !confirm) {
+      setError("Vui lòng nhập đầy đủ thông tin.");
+      return;
+    }
+
+    if (password !== confirm) {
+      setError("Mật khẩu xác nhận không khớp.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Mật khẩu phải có ít nhất 6 ký tự.");
+      return;
+    }
+
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await fetch(`${API_BASE}/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Đăng ký thất bại.");
+        return;
+      }
+
+      setSuccess("Tài khoản đã được tạo! Đang chuyển hướng...");
+      setTimeout(() => navigate("/login"), 1500);
+    } catch {
+      setError("Không thể kết nối đến máy chủ. Vui lòng thử lại.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div>
-      <h2>Register</h2>
+    <div className="login-wrapper">
+      {/* Background layers */}
+      <div className="bg-layer" />
+      <div className="spotlight" />
 
-      <input
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
+      {/* Floating film strips */}
+      <FilmStrip left="5%" dur={14} delay={0} r={-3} h={320} />
+      <FilmStrip left="15%" dur={18} delay={-5} r={2} h={240} />
+      <FilmStrip left="55%" dur={22} delay={-12} r={-2} h={200} />
+      <FilmStrip left="75%" dur={16} delay={-8} r={-1} h={280} />
+      <FilmStrip left="88%" dur={20} delay={-3} r={3} h={360} />
 
-      <br />
+      {/* Starfield */}
+      <svg className="stars" aria-hidden="true">
+        {Array.from({ length: 60 }, (_, i) => (
+          <circle
+            key={i}
+            cx={`${Math.random() * 100}%`}
+            cy={`${Math.random() * 100}%`}
+            r={Math.random() * 1.2 + 0.3}
+            fill="rgba(240,236,224,0.25)"
+            style={{ opacity: Math.random() * 0.6 + 0.1 }}
+          />
+        ))}
+      </svg>
 
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
+      {/* Card */}
+      <div className="login-card">
+        <div className="corner corner-tl" />
+        <div className="corner corner-br" />
+        <div className="ticket-strip" />
 
-      <br />
+        {/* Logo */}
+        <div className="logo-area">
+          <p className="logo-eyebrow">Premium Cinema</p>
+          <h1 className="logo-title">CINEMAX</h1>
+          <div className="logo-line" />
+        </div>
 
-      <button onClick={handleRegister}>Register</button>
+        {/* Error */}
+        {error && (
+          <div className="error-msg">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            {error}
+          </div>
+        )}
+
+        {/* Success */}
+        {success && (
+          <div className="success-msg">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="9 12 11 14 15 10" />
+            </svg>
+            {success}
+          </div>
+        )}
+
+        {/* Username */}
+        <div className="form-group">
+          <label className="form-label">Tên đăng nhập</label>
+          <input
+            className="form-input"
+            placeholder="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            autoComplete="username"
+          />
+        </div>
+
+        {/* Password */}
+        <div className="form-group">
+          <label className="form-label">Mật khẩu</label>
+          <input
+            className="form-input"
+            type="password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="new-password"
+          />
+        </div>
+
+        {/* Confirm Password */}
+        <div className="form-group">
+          <label className="form-label">Xác nhận mật khẩu</label>
+          <input
+            className="form-input"
+            type="password"
+            placeholder="••••••••"
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+            autoComplete="new-password"
+            onKeyDown={(e) => e.key === "Enter" && handleRegister()}
+          />
+        </div>
+
+        {/* Submit */}
+        <button
+          className="login-btn"
+          onClick={handleRegister}
+          disabled={loading}
+          style={{ marginTop: 8 }}
+        >
+          {loading ? "ĐANG XỬ LÝ..." : "ĐẶT VÉ NGAY"}
+          {loading && <span className="btn-loading-bar" />}
+        </button>
+
+        {/* Divider */}
+        <div className="divider">
+          <div className="divider-line" />
+          <span className="divider-text">hoặc</span>
+          <div className="divider-line" />
+        </div>
+
+        {/* Footer */}
+        <div className="card-footer">
+          <p className="footer-text">
+            Đã có tài khoản?{" "}
+            <span className="footer-link" onClick={() => navigate("/login")}>
+              Đăng nhập ngay
+            </span>
+          </p>
+        </div>
+      </div>
     </div>
   );
 };

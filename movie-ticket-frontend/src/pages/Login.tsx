@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/login.css";
 
+const API_BASE = "http://192.168.1.6:8081";
+
 /* ─── FilmStrip sub-component ────────────────────────────── */
 interface FilmStripProps {
   left: string;
@@ -30,13 +32,13 @@ const FilmStrip: React.FC<FilmStripProps> = ({ left, dur, delay, r, h }) => (
 const Login: React.FC = () => {
   const navigate = useNavigate();
 
-  const [email, setEmail]       = useState<string>("");
+  const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [loading, setLoading]   = useState<boolean>(false);
-  const [error, setError]       = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
   const handleLogin = async () => {
-    if (!email || !password) {
+    if (!username || !password) {
       setError("Vui lòng nhập đầy đủ thông tin.");
       return;
     }
@@ -44,14 +46,28 @@ const Login: React.FC = () => {
     setError("");
     setLoading(true);
 
-    console.log("CALL API: /login", { email, password });
+    try {
+      const res = await fetch(`${API_BASE}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
 
-    setTimeout(() => {
-      setLoading(false);
-      console.log("LOGIN SUCCESS");
-      alert("Đăng nhập thành công");
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Đăng nhập thất bại.");
+        return;
+      }
+
+      // Lưu thông tin user nếu cần
+      localStorage.setItem("user", JSON.stringify(data.user));
       navigate("/movies");
-    }, 1500);
+    } catch {
+      setError("Không thể kết nối đến máy chủ. Vui lòng thử lại.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -61,11 +77,11 @@ const Login: React.FC = () => {
       <div className="spotlight" />
 
       {/* Floating film strips */}
-      <FilmStrip left="5%"  dur={14} delay={0}   r={-3} h={320} />
-      <FilmStrip left="15%" dur={18} delay={-5}  r={2}  h={240} />
+      <FilmStrip left="5%" dur={14} delay={0} r={-3} h={320} />
+      <FilmStrip left="15%" dur={18} delay={-5} r={2} h={240} />
       <FilmStrip left="55%" dur={22} delay={-12} r={-2} h={200} />
-      <FilmStrip left="75%" dur={16} delay={-8}  r={-1} h={280} />
-      <FilmStrip left="88%" dur={20} delay={-3}  r={3}  h={360} />
+      <FilmStrip left="75%" dur={16} delay={-8} r={-1} h={280} />
+      <FilmStrip left="88%" dur={20} delay={-3} r={3} h={360} />
 
       {/* Starfield */}
       <svg className="stars" aria-hidden="true">
@@ -106,22 +122,23 @@ const Login: React.FC = () => {
               strokeWidth="2"
             >
               <circle cx="12" cy="12" r="10" />
-              <line x1="12" y1="8"  x2="12"    y2="12" />
+              <line x1="12" y1="8" x2="12" y2="12" />
               <line x1="12" y1="16" x2="12.01" y2="16" />
             </svg>
             {error}
           </div>
         )}
 
-        {/* Email */}
+        {/* Username */}
         <div className="form-group">
-          <label className="form-label">Email</label>
+          <label className="form-label">Tên đăng nhập</label>
           <input
             className="form-input"
-            placeholder="ten@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            autoComplete="email"
+            placeholder="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            autoComplete="username"
+            onKeyDown={(e) => e.key === "Enter" && handleLogin()}
           />
         </div>
 
@@ -135,6 +152,7 @@ const Login: React.FC = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             autoComplete="current-password"
+            onKeyDown={(e) => e.key === "Enter" && handleLogin()}
           />
         </div>
 
@@ -162,7 +180,9 @@ const Login: React.FC = () => {
         <div className="card-footer">
           <p className="footer-text">
             Chưa có tài khoản?{" "}
-            <span className="footer-link">Đăng ký ngay</span>
+            <span className="footer-link" onClick={() => navigate("/register")}>
+              Đăng ký ngay
+            </span>
           </p>
         </div>
       </div>
